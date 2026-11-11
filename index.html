@@ -2,91 +2,45 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PINKYVANTH – One name. One world. Infinite identities.</title>
-<meta name="description" content="A global directory of verified, consenting adults named Pinky.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PINKYVANTH — One name. One world. Infinite identities.</title>
+<meta name="description" content="PINKYVANTH: an endless universe of fictional demonstration profiles named Pinky.">
+<meta name="theme-color" content="#0a0a0d">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<a class="skip" href="#grid">Skip to profiles</a>
-
 <header class="top">
-  <a class="brand" href="#" aria-label="PINKYVANTH home">PINKYVANTH</a>
-  <nav class="nav" aria-label="Main">
-    <button class="icon-btn" id="searchToggle" aria-expanded="false" aria-controls="searchBar" aria-label="Search">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
-    </button>
-    <button class="btn" data-open="submit">Add your profile</button>
-  </nav>
-  <form class="searchbar" id="searchBar" role="search" hidden>
-    <select id="searchMode" aria-label="Search by">
-      <option value="all">Profiles</option>
-      <option value="id">Profile ID</option>
-      <option value="country">Country</option>
-      <option value="profession">Profession</option>
-      <option value="interests">Interests</option>
-    </select>
-    <input id="searchInput" type="search" autocomplete="off" spellcheck="false" aria-label="Search query" placeholder="Search">
-    <button class="btn" type="submit">Search</button>
+  <div class="brandrow">
+    <div>
+      <h1 class="brand">PINKYVANTH</h1>
+      <p class="tag">ONE NAME. ONE WORLD. INFINITE IDENTITIES.</p>
+    </div>
+    <div class="stat" aria-live="polite"><b id="total">0</b><span>fictional profiles generated</span></div>
+  </div>
+  <form class="search" id="searchForm" role="search" autocomplete="off">
+    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5L21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="q" type="search" inputmode="search" placeholder="Search ID, name, country or profession" aria-label="Search profiles" spellcheck="false">
+    <button type="button" id="clear" class="clear" aria-label="Clear search" hidden>&times;</button>
   </form>
+  <nav class="disc" aria-label="Country discovery">
+    <div class="tabs" id="regions"></div>
+    <div class="chips" id="countries"></div>
+    <div class="chips cats" id="cats" aria-label="Profession categories"></div>
+  </nav>
 </header>
 
-<section class="hero">
-  <h1>One name. One world. Infinite identities.</h1>
-  <p>A directory of verified adults named Pinky, from every country.</p>
-</section>
-
-<section class="discover" aria-label="Global discovery">
-  <div class="chips" id="regions" role="group" aria-label="Regions"></div>
-  <div class="chips small" id="countries" role="group" aria-label="Countries"></div>
-  <div class="chips small" id="categories" role="group" aria-label="Categories"></div>
-</section>
-
 <main>
-  <div id="grid" class="grid"></div>
-  <div id="empty" class="empty" hidden>
-    <h2>No verified profiles here yet</h2>
-    <p>Profiles appear after the owner consents and a moderator approves them. If your name is Pinky and you are 18 or older, add yours.</p>
-    <button class="btn" data-open="submit">Add your profile</button>
-  </div>
+  <section id="results" class="results" hidden>
+    <div class="rhead"><span id="rinfo"></span><button type="button" id="rclose">Back to feed</button></div>
+    <div class="grid" id="rgrid"></div>
+  </section>
+
+  <p class="notice">Every profile here is a fictional, AI-style demonstration persona. None are real people.</p>
+  <section class="grid" id="feed" aria-label="Profile feed"></section>
   <div id="sentinel" aria-hidden="true"></div>
 </main>
 
-<section id="results" class="results" aria-label="Search results" hidden>
-  <div class="results-head"><span id="resultsCount" role="status"></span><button class="btn ghost" id="resultsClose">Close</button></div>
-  <div id="resultsList" class="grid"></div>
-</section>
-
-<footer class="foot">
-  <span>PINKYVANTH · public, consented records only</span>
-  <button class="link" data-open="correct">Correct a profile</button>
-  <button class="link" data-open="remove">Remove a profile</button>
-</footer>
-
-<div id="toast" class="toast" role="status" hidden></div>
-
-<dialog id="dlg">
-  <form id="reqForm" method="dialog" novalidate>
-    <h2 id="dlgTitle"></h2>
-    <input type="hidden" name="type">
-    <input class="hp" type="text" name="website_hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <label>Name <input name="name" required maxlength="120"></label>
-    <label data-for="correct remove">Profile ID <input name="profile_id" inputmode="numeric" pattern="[0-9]+" maxlength="200"></label>
-    <label data-for="submit">Country <input name="country" maxlength="80"></label>
-    <label data-for="submit">Profession <input name="profession" maxlength="120"></label>
-    <label data-for="submit">Biography <textarea name="bio" rows="3" maxlength="600"></textarea></label>
-    <label data-for="submit">Interests (comma separated) <input name="interests" maxlength="200"></label>
-    <label data-for="submit">Photograph (optional) <input type="file" name="photo" accept="image/jpeg,image/png,image/webp"></label>
-    <label data-for="submit">Public website or social link (optional) <input type="url" name="link" maxlength="300"></label>
-    <label data-for="correct remove">Details <textarea name="message" rows="3" maxlength="800"></textarea></label>
-    <label>Your email, for moderation only <input type="email" name="email" required maxlength="200"></label>
-    <label class="check" data-for="submit"><input type="checkbox" name="adult"> I am 18 or older.</label>
-    <label class="check" data-for="submit"><input type="checkbox" name="consent"> I consent to publish this information publicly after moderation.</label>
-    <p class="note" id="formNote" role="alert"></p>
-    <div class="row"><button class="btn ghost" type="button" id="dlgCancel">Cancel</button><button class="btn" type="submit">Send</button></div>
-  </form>
-</dialog>
-
+<noscript><p class="notice">PINKYVANTH needs JavaScript to generate its profiles.</p></noscript>
 <script src="script.js"></script>
 </body>
 </html>
