@@ -20,3 +20,12 @@ Static, GitHub Pages-ready: `index.html`, `style.css`, `script.js`, and `data/`.
 In `script.js` set `CONFIG.submitEndpoint` (Formspree, Getform, or your own API) or `CONFIG.contactEmail`.
 Submissions go to your inbox only. A moderator verifies each one, then adds it to the next page file.
 Handle correction and removal requests the same way and remove records promptly.
+
+## Loading your records
+`python3 tools/build_data.py records.json` validates the records (approved, consent, adult, digit-string ID, no duplicates),
+keeps your order, writes the page files and rebuilds `manifest.json` with real country counts. Re-run it whenever records change.
+
+## View counter (optional)
+Set `CONFIG.countEndpoint` in `script.js`. Each page load, every profile scrolled into view sends one `POST {"ids":["123"]}`
+and expects `{"counts":{"123":42}}` back with the updated totals. A refresh counts again. GitHub Pages cannot store counts,
+so this needs a small backend (for example a Cloudflare Worker with KV). Leave it empty and no counter is shown.

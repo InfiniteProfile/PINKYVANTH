@@ -9,7 +9,8 @@ const CONFIG = {
   manifestPollMs: 60000,      // check for newly published pages
   // Moderation inbox. Set ONE of these (see README). Nothing is published without moderator approval.
   submitEndpoint: '',         // e.g. a Formspree / Getform / your own API URL
-  contactEmail: ''            // mailto fallback if no endpoint is set
+  contactEmail: '',           // mailto fallback if no endpoint is set
+  countEndpoint: ''           // optional view counter API (see README). Empty = no counter shown
 };
 const REGIONS = ['Asia', 'Europe', 'Africa', 'North America', 'South America', 'Oceania'];
 const CATEGORIES = ['Artists', 'Students', 'Entrepreneurs', 'Professionals', 'Writers', 'Athletes', 'Creators', 'Scientists', 'Public Figures', 'Other Professions'];
@@ -58,9 +59,29 @@ function matchesFilter(p) {
   return true;
 }
 
+/* ---------- Optional view counter: +1 per profile scrolled into view on each page load ---------- */
+const viewPending = new Set(), viewCounted = new Set(); let viewTimer = 0;
+const viewObs = CONFIG.countEndpoint && 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+  es.forEach(x => {
+    if (!x.isIntersecting) return;
+    const id = x.target.dataset.id; viewObs.unobserve(x.target);
+    if (!viewCounted.has(id)) { viewCounted.add(id); viewPending.add(id); }
+  });
+  clearTimeout(viewTimer); viewTimer = setTimeout(flushViews, 1500);
+}, { threshold: 0.5 }) : null;
+async function flushViews() {
+  const ids = [...viewPending]; viewPending.clear(); if (!ids.length) return;
+  try {
+    const r = await fetch(CONFIG.countEndpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) });
+    const d = await r.json();
+    for (const [id, n] of Object.entries(d.counts || {})) if (/^[0-9]+$/.test(id))
+      document.querySelectorAll('[data-id="' + id + '"] .views').forEach(v => { v.textContent = n + (String(n) === '1' ? ' view' : ' views'); });
+  } catch { /* counter is optional; ignore failures */ }
+}
+
 /* ---------- Cards ---------- */
 function card(p) {
-  const c = el('article', 'card');
+  const c = el('article', 'card'); c.dataset.id = p.id;
   const row = el('div', 'top-row');
   if (p.photo && p.photoConsent === true && /^https:\/\//i.test(p.photo)) {
     const img = el('img', 'avatar'); img.loading = 'lazy'; img.decoding = 'async'; img.width = img.height = 64;
@@ -77,6 +98,7 @@ function card(p) {
   }
   if (Array.isArray(p.achievements) && p.achievements.length) c.append(el('p', '', 'Achievements: ' + p.achievements.join('; ')));
   if (p.created) { const d = new Date(p.created); if (!isNaN(d)) c.append(el('div', 'date', 'Added ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }))); }
+  if (viewObs) { c.append(el('div', 'date views')); viewObs.observe(c); }
   return c;
 }
 /* Append in small frame-sized chunks so the page never freezes. Appending never moves the viewport. */
